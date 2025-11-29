@@ -1,7 +1,9 @@
 <?php
+session_start();
 $basePath = dirname(dirname(__FILE__));
 include $basePath . '/config.php';
 include $basePath . '/includes/header.php';
+
 ?>
 
 <?php
@@ -10,16 +12,21 @@ include $basePath . '/includes/header.php';
     $message_type = '';
 
     if (isset($_POST['submit'])){
-        $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-        $user = 'user';
-        // Insert post into database
-        $sql = "INSERT INTO posts (title, content, user) VALUES ('$title', '$content', '$user')";
-        if ($conn->query($sql) === TRUE) {
-            $message = 'New post created successfully';
-            $message_type = 'success';
-        } else {
-            $message = 'Error: ' . $conn->error;
+        if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true){    
+            $title = filter_input(INPUT_POST, 'title', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $content = filter_input(INPUT_POST, 'content', FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $user = $_SESSION['username'];
+            // Insert post into database
+            $sql = "INSERT INTO posts (title, content, user) VALUES ('$title', '$content', '$user')";
+            if ($conn->query($sql) === TRUE) {
+                $message = 'New post created successfully';
+                $message_type = 'success';
+            } else {
+                $message = 'Error: ' . $conn->error;
+                $message_type = 'error';
+            }
+        }else{
+            $message = 'You must log in first to create a post.';
             $message_type = 'error';
         }
     }
@@ -34,7 +41,7 @@ include $basePath . '/includes/header.php';
     <div style="margin-bottom:16px; padding:12px 16px; border:1px solid <?php echo $border;?>; background:<?php echo $bg;?>; border-radius:8px; position:relative; box-shadow:0 1px 2px rgba(0,0,0,0.03);">
         <strong style="display:block; margin-bottom:6px; color:#333;"><?php echo $message_type === 'success' ? 'Success' : 'Error'; ?></strong>
         <div style="color:#333;"><?php echo htmlspecialchars($message); ?></div>
-        <button type="button" onclick="this.parentElement.style.display='none'" aria-label="Close" style="position:absolute; right:8px; top:8px; border:none; background:transparent; font-size:18px; line-height:1; cursor:pointer; color:#666;">&times;</button>
+        <button type="button" onclick="this.parentElement.style.display='none'" aria-label="Close" style="position:absolute; right:8px; top:8px; border:none; background:transparent; font-size:18px; line-height:1; cursor:pointer; color:#333;">&times;</button>
     </div>
     <?php endif; ?>
 
@@ -51,6 +58,10 @@ include $basePath . '/includes/header.php';
 
         <button type="submit" name="submit" style="width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.3s;">Submit</button>
     </form>
+
+    <p style="text-align: center; margin-top: 20px; color: #333;">
+        Haven't logged in yet? <a href="login.php" style="color: #007bff; text-decoration: none; font-weight: bold;">Login here</a>
+    </p>
 </div>
 
 <?php

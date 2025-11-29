@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,7 +100,7 @@
         .post-excerpt {
             font-size: 1em;
             margin-bottom: 15px;
-            color: #666;
+            color: #333;
         }
 
         .post-footer {
@@ -190,6 +191,13 @@
         <nav>
             <a href= home.php>Home</a>
             <a href= post.php>Post</a>
+            <?php
+            if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true) {
+                echo '<a href="logout.php">Logout</a>';
+            }else{
+                echo '<a href= login.php>Login/Register</a>';
+            }
+            ?>
         </nav>
 
         <header>

@@ -1,4 +1,5 @@
 <?php
+session_start();
 $basePath = dirname(dirname(__FILE__));
 include $basePath . '/config.php';
 include $basePath . '/includes/header.php';
@@ -10,7 +11,6 @@ include $basePath . '/includes/header.php';
     $result = $conn->query($sql);
 
     foreach ($result as $post){
-        // var_dump($post);  // Debugging line to check the content of $post
         ?>
         <div class="post-card">
             <div class="post-header">
